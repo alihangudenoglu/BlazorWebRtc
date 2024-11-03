@@ -11,4 +11,10 @@
     <ProjectReference Include="..\BlazorWebRtc.Persistence\BlazorWebRtc.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Queries\" />
+    <Folder Include="Interface\" />
+    <Folder Include="Mapping\" />
+  </ItemGroup>
+
 </Project>
