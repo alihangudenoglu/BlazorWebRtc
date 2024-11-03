@@ -66,7 +66,7 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, Guid>
             await profilePicture.CopyToAsync(fileStream);
         }
 
-        return Path.Combine("images", "profile-pictures");
+        return Path.Combine("images", "profile-pictures",fileName);
 
     }
 
