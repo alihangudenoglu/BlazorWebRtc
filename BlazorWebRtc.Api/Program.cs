@@ -1,5 +1,7 @@
 using BlazorWebRtc.Application.Features.Commands.Account.Login;
 using BlazorWebRtc.Application.Features.Commands.Account.Register;
+using BlazorWebRtc.Application.Features.Commands.RequestFeature;
+using BlazorWebRtc.Application.Features.Queries.RequestFeature;
 using BlazorWebRtc.Application.Features.Queries.UserInfo;
 using BlazorWebRtc.Application.Interface.Services;
 using BlazorWebRtc.Application.Models;
@@ -7,8 +9,8 @@ using BlazorWebRtc.Application.Services;
 using BlazorWebRtc.Persistence.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
 
@@ -23,6 +25,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped(typeof(BaseResponseModel));
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -30,6 +33,8 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(RegisterHandler).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(LoginHandler).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(UserListHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(RequestHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(RequestsHandler).Assembly);
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -56,6 +61,39 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
     };
 });
+
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description =
+            "JWT Authorization header using the Bearer scheme. \r\n\r\n " +
+            "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
+            "Example: \"Bearer 12345abcdef\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Scheme = JwtBearerDefaults.AuthenticationScheme
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+{
+    {
+       new OpenApiSecurityScheme
+        {
+            Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        },
+            Scheme = "oauth2",
+            Name = "Bearer",
+            In = ParameterLocation.Header
+        },
+        new List<string>()
+    }
+});
+});
+
 
 var app = builder.Build();
 
