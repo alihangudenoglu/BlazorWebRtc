@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Commands\MessageCommand\" />
     <Folder Include="Mapping\" />
   </ItemGroup>
 

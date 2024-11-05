@@ -9,7 +9,6 @@ public class AppDbContext:DbContext
     {
     }
 
-    public DbSet<Message> Messages { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<MessageRoom> MessageRooms { get; set; }
     public DbSet<UserFriend> UserFriends { get; set; }

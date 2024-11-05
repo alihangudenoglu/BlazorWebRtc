@@ -1,6 +1,7 @@
 using BlazorWebRtc.Application.Features.Commands.Account.Login;
 using BlazorWebRtc.Application.Features.Commands.Account.Register;
 using BlazorWebRtc.Application.Features.Commands.Feature;
+using BlazorWebRtc.Application.Features.Commands.MessageCommand.SendMessage;
 using BlazorWebRtc.Application.Features.Commands.RequestFeature;
 using BlazorWebRtc.Application.Features.Queries.RequestFeature;
 using BlazorWebRtc.Application.Features.Queries.UserFriend;
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRequestService, RequestService>();
 builder.Services.AddScoped<IUserFriendService, UserFriendService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -40,6 +42,7 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(RequestsHandler).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(UserFriendHandler).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(UserFriendListQuery).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(SendMessageHandler).Assembly);
 });
 
 builder.Services.AddHttpContextAccessor();

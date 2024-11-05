@@ -5,6 +5,7 @@ namespace BlazorWebRtc.Domain;
 
 public class MessageRoom:BaseEntity
 {
+    public string MessageContent { get; set; }
     [ForeignKey(nameof(SenderUser))]
     public Guid? SenderUserId { get; set; }
     [ForeignKey(nameof(ReceiverUser))]
@@ -13,5 +14,4 @@ public class MessageRoom:BaseEntity
     public User SenderUser { get; set; }
     public User ReceiverUser { get; set; }
 
-    public virtual ICollection<Message> Messages { get; set; }
 }
