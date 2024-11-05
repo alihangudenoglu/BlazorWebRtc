@@ -1,10 +1,10 @@
-﻿using BlazorWebRtc.Application.Models;
+﻿using BlazorWebRtc.Domain;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace BlazorWebRtc.Application.Features.Commands.Account.Register;
 
-public class RegisterCommand:IRequest<Guid>
+public class RegisterCommand:IRequest<User>
 {
     public string UserName { get; set; }
     public string Email { get; set; }

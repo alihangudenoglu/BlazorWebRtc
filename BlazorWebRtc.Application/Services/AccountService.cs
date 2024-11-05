@@ -1,5 +1,4 @@
-﻿using Azure;
-using BlazorWebRtc.Application.Features.Commands.Account.Login;
+﻿using BlazorWebRtc.Application.Features.Commands.Account.Login;
 using BlazorWebRtc.Application.Features.Commands.Account.Register;
 using BlazorWebRtc.Application.Interface.Services;
 using BlazorWebRtc.Application.Models;
@@ -37,6 +36,7 @@ public class AccountService : IAccountService
         if (response!=null)
         {
             _responseModel.IsSuccess = true;
+            _responseModel.Data = response;
             return _responseModel;
         }
         _responseModel.IsSuccess = false;

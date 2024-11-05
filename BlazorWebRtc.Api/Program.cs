@@ -3,6 +3,7 @@ using BlazorWebRtc.Application.Features.Commands.Account.Register;
 using BlazorWebRtc.Application.Features.Commands.Feature;
 using BlazorWebRtc.Application.Features.Commands.MessageCommand.SendMessage;
 using BlazorWebRtc.Application.Features.Commands.RequestFeature;
+using BlazorWebRtc.Application.Features.Commands.Upload;
 using BlazorWebRtc.Application.Features.Queries.RequestFeature;
 using BlazorWebRtc.Application.Features.Queries.UserFriend;
 using BlazorWebRtc.Application.Features.Queries.UserInfo;
@@ -31,6 +32,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRequestService, RequestService>();
 builder.Services.AddScoped<IUserFriendService, UserFriendService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IUploadService, UploadService>();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -43,6 +45,7 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(UserFriendHandler).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(UserFriendListQuery).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(SendMessageHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(UploadHandler).Assembly);
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -68,6 +71,17 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtSettings.GetValue<string>("Audience"),
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
     };
+});
+
+
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("AllowBlazorApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:5227")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
 });
 
 
@@ -115,6 +129,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors("AllowBlazorApp");
 
 app.MapControllers();
 

@@ -19,7 +19,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("Register")]
-    public async Task<IActionResult> Register([FromForm]RegisterCommand command)
+    public async Task<IActionResult> Register([FromBody] RegisterCommand command)
     {
         return Ok(await _accountService.SignUp(command));
     }

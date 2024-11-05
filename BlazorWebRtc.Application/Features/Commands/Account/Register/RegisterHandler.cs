@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 
 namespace BlazorWebRtc.Application.Features.Commands.Account.Register;
 
-public class RegisterHandler : IRequestHandler<RegisterCommand, Guid>
+public class RegisterHandler : IRequestHandler<RegisterCommand, User>
 {
     private readonly AppDbContext _context;
 
@@ -18,7 +18,7 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, Guid>
         _context = context;
     }
 
-    public async Task<Guid> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<User> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         if (await _context.Users.AnyAsync(u => u.UserName == request.UserName, cancellationToken))
         {
@@ -38,16 +38,12 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, Guid>
         _context.Users.Add(user);
         await _context.SaveChangesAsync(cancellationToken);
 
-        if (request.ProfilePicture is not null && request.ProfilePicture.Length > 0)
-        {
-            var imagePath = await SaveProfilePicture(request.ProfilePicture, user.Id);
-            user.ProfilePicture= imagePath;
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync(cancellationToken);
+        //var imagePath = await SaveProfilePicture(request.ProfilePicture, user.Id);
+        //user.ProfilePicture= imagePath;
+        //_context.Users.Update(user);
+        //await _context.SaveChangesAsync(cancellationToken);
 
-            return user.Id;
-        }
-        throw new Exception("Profile Picture Not Saved");
+        return user;
 
     }
 

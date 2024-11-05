@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWebRtc.Client", "BlazorWebRtc.Client\BlazorWebRtc.Client.csproj", "{1628BBB4-BE51-477B-8C2F-75ECEC5C5DAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWebRtc.Client", "BlazorWebRtc.Client\BlazorWebRtc.Client.csproj", "{1628BBB4-BE51-477B-8C2F-75ECEC5C5DAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWebRtc.Api", "BlazorWebRtc.Api\BlazorWebRtc.Api.csproj", "{ED7C74AC-3370-45E0-8229-3742A424CA60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWebRtc.Api", "BlazorWebRtc.Api\BlazorWebRtc.Api.csproj", "{ED7C74AC-3370-45E0-8229-3742A424CA60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWebRtc.Application", "BlazorWebRtc.Application\BlazorWebRtc.Application.csproj", "{F0F027E5-B38A-4AB7-A45B-0175774AE3DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWebRtc.Application", "BlazorWebRtc.Application\BlazorWebRtc.Application.csproj", "{F0F027E5-B38A-4AB7-A45B-0175774AE3DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWebRtc.Domain", "BlazorWebRtc.Domain\BlazorWebRtc.Domain.csproj", "{DE795B08-EB2E-43CD-A6DB-ED52B62EBF2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWebRtc.Domain", "BlazorWebRtc.Domain\BlazorWebRtc.Domain.csproj", "{DE795B08-EB2E-43CD-A6DB-ED52B62EBF2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWebRtc.Persistence", "BlazorWebRtc.Persistence\BlazorWebRtc.Persistence.csproj", "{E4784B56-9673-489E-9370-421FC04DBD93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWebRtc.Persistence", "BlazorWebRtc.Persistence\BlazorWebRtc.Persistence.csproj", "{E4784B56-9673-489E-9370-421FC04DBD93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
