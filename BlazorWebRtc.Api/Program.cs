@@ -1,7 +1,9 @@
 using BlazorWebRtc.Application.Features.Commands.Account.Login;
 using BlazorWebRtc.Application.Features.Commands.Account.Register;
+using BlazorWebRtc.Application.Features.Commands.Feature;
 using BlazorWebRtc.Application.Features.Commands.RequestFeature;
 using BlazorWebRtc.Application.Features.Queries.RequestFeature;
+using BlazorWebRtc.Application.Features.Queries.UserFriend;
 using BlazorWebRtc.Application.Features.Queries.UserInfo;
 using BlazorWebRtc.Application.Interface.Services;
 using BlazorWebRtc.Application.Models;
@@ -26,6 +28,7 @@ builder.Services.AddScoped(typeof(BaseResponseModel));
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRequestService, RequestService>();
+builder.Services.AddScoped<IUserFriendService, UserFriendService>();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -35,6 +38,8 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(UserListHandler).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(RequestHandler).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(RequestsHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(UserFriendHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(UserFriendListQuery).Assembly);
 });
 
 builder.Services.AddHttpContextAccessor();

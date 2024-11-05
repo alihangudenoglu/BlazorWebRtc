@@ -20,7 +20,7 @@ public class RequestHandler : IRequestHandler<RequestCommand, bool>
 
     public async Task<bool> Handle(RequestCommand request, CancellationToken cancellationToken)
     {
-        var result = await _context.Users.FirstOrDefaultAsync(x => x.Id == request.ReceiverUserId);
+        var result = await _context.Users.FirstOrDefaultAsync(x => x.Id == request.ReceiverUserId && request.Status==Status.pending);
 
         if (result is not null)
         {

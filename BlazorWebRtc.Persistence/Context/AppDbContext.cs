@@ -31,6 +31,18 @@ public class AppDbContext:DbContext
             .HasForeignKey(i => i.ReceiverUserId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<UserFriend>()
+            .HasOne(i => i.Requester)
+            .WithMany()
+            .HasForeignKey(i => i.RequesterId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<UserFriend>()
+            .HasOne(i => i.ReceiverUser)
+            .WithMany()
+            .HasForeignKey(i => i.ReceiverUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<MessageRoom>()
             .HasOne(i => i.SenderUser)
             .WithMany()

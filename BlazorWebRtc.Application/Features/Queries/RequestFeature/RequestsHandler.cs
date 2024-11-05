@@ -1,4 +1,5 @@
 ﻿using BlazorWebRtc.Application.DTO.Request;
+using BlazorWebRtc.Domain;
 using BlazorWebRtc.Persistence.Context;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ public class RequestsHandler : IRequestHandler<RequestsQuery, List<GetRequestDto
 
     public async Task<List<GetRequestDto>> Handle(RequestsQuery request, CancellationToken cancellationToken)
     {
-        var requests = await _context.Requests.Include(x => x.SenderUser).Where(x => x.ReceiverUserId == request.UserId).ToListAsync(cancellationToken);
+        var requests = await _context.Requests.Include(x => x.SenderUser).Where(x => x.ReceiverUserId == request.UserId && x.Status==Status.pending).ToListAsync(cancellationToken);
 
         List<GetRequestDto> requestList = new();
         foreach (var item in requests)
@@ -25,6 +26,7 @@ public class RequestsHandler : IRequestHandler<RequestsQuery, List<GetRequestDto
             requestDto.ProfilePicture = item.SenderUser.ProfilePicture;
             requestDto.UserName = item.SenderUser.UserName;
             requestDto.Email = item.SenderUser.Email;
+            requestDto.UserId = item.SenderUserId;
             requestList.Add(requestDto);
         }
 

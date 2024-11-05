@@ -1,4 +1,5 @@
 ﻿using BlazorWebRtc.Application.Features.Commands.RequestFeature;
+using BlazorWebRtc.Application.Features.Commands.RequestFeature.Update;
 using BlazorWebRtc.Application.Features.Queries.RequestFeature;
 using BlazorWebRtc.Application.Interface.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,12 @@ public class RequestController : ControllerBase
         RequestsQuery query = new RequestsQuery();
         query.UserId = Guid.Parse(userId);
         return Ok(await _requestService.GetRequestList(query));
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateRequest(UpdateRequestCommand command)
+    {
+        return Ok(await _requestService.UpdateRequest(command));
     }
 
 }

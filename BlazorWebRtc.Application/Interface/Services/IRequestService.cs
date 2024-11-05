@@ -1,4 +1,5 @@
 ﻿using BlazorWebRtc.Application.Features.Commands.RequestFeature;
+using BlazorWebRtc.Application.Features.Commands.RequestFeature.Update;
 using BlazorWebRtc.Application.Features.Queries.RequestFeature;
 using BlazorWebRtc.Application.Models;
 
@@ -8,4 +9,5 @@ public interface IRequestService
 {
     Task<BaseResponseModel> SendRequest(RequestCommand requestCommand);
     Task<BaseResponseModel> GetRequestList(RequestsQuery query);
+    Task<BaseResponseModel> UpdateRequest(UpdateRequestCommand command);
 }
