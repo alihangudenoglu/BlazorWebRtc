@@ -1,4 +1,9 @@
-﻿<style>
+﻿@using BlazorWebRtc.Client.Services.Abstract
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IAccountService accountService
+@inject NavigationManager navigationManager
+
+<style>
     header {
         background-color: #007bff;
         padding: 1rem;
@@ -23,14 +28,25 @@
     <nav>
         <ul>
             <li><a href="#">Home</a></li>
-            <li><a href="#">Discover</a></li>
             <li><a href="#">Messages</a></li>
             <li><a href="#">Notifications</a></li>
-            <li><a href="#">Profile</a></li>
+
+            <AuthorizeView>
+                <Authorized>
+                    <li><a href="#"> @context.User.Identity.Name</a></li>
+
+                    <li><a @onclick="@Logout" href="#">Logout</a></li>
+                </Authorized>                
+            </AuthorizeView>
+
         </ul>
     </nav>
 </header>
 
 @code {
-
+    private async Task Logout()
+    {
+        await accountService.Logout();
+        navigationManager.NavigateTo("/");
+    }
 }

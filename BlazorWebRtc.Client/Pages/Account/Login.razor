@@ -1,4 +1,9 @@
 ﻿@page "/login"
+@using BlazorWebRtc.Client.Models.Request
+@using BlazorWebRtc.Client.Services.Abstract
+@using Microsoft.AspNetCore.Components.Forms
+@inject IAccountService accountService
+@inject NavigationManager navigationManager
 
 <!DOCTYPE html>
 <html lang="en">
@@ -69,19 +74,39 @@
 <body>
     <div class="login-container">
         <h2>Login</h2>
-        <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Password" />
-        <button>Login</button>
+
+        <EditForm Model="@requestModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <InputText @bind-Value="@requestModel.UserName" placeholder="UserName" class="form-control"></InputText>
+            <ValidationMessage For="@(() => requestModel.UserName)"></ValidationMessage>
+
+            <InputText @bind-Value="@requestModel.Password" placeholder="Password" type="password" class="form-control"></InputText>
+            <ValidationMessage For="@(() => requestModel.Password)"></ValidationMessage>
+
+            <button type="submit">Login</button>
+        </EditForm>
+
+
+
         <p>Don't have an account? <a href="/register">Register here</a></p>
     </div>
 </body>
 </html>
 
 @code {
-    // Login işlemiyle ilgili kodlar buraya eklenebilir
-}
+    LoginCommand requestModel = new LoginCommand();
 
+    private async Task HandleLogin()
+    {
+        var response = await accountService.Login(requestModel);
 
-@code {
+        if (response)
+        {
+            navigationManager.NavigateTo("/");
+        }
+
+    }
 
 }

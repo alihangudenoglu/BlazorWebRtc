@@ -6,6 +6,8 @@ namespace BlazorWebRtc.Client.Services.Abstract
     public interface IAccountService
     {
         Task<UserResponseModel> SignUp(RegisterCommand command);
+        Task<bool> Login(LoginCommand command);
+        Task Logout();
     }
 }
 

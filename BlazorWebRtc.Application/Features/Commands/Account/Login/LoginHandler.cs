@@ -51,8 +51,9 @@ public class LoginHandler : IRequestHandler<LoginCommand, (bool, string)>
 
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Name,user.UserName),
-            new Claim(JwtRegisteredClaimNames.NameId,user.Id.ToString()),
+            new Claim(ClaimTypes.Name,user.UserName),
+            new Claim(ClaimTypes.Email,user.Email),
+            new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
         };
 
         var token = new JwtSecurityToken(issuer, audience, claims,expires:DateTime.Now.AddMinutes(expirationMinutes),signingCredentials:credentials);
