@@ -44,7 +44,7 @@ public class UploadController : ControllerBase
         }
 
         // Dosyanın tarayıcıda erişilebilir yolu
-        var imageUrl = $"/images/profile-pictures/{fileName}";
+        var imageUrl = $"images/profile-pictures/{fileName}";
 
         UploadCommand uploadCommand = new UploadCommand();
         uploadCommand.File = imageUrl;

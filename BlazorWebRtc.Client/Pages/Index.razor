@@ -1,5 +1,8 @@
 ﻿@page "/"
+@using BlazorWebRtc.Client.Models.Response
+@using BlazorWebRtc.Client.Services.Abstract
 @using BlazorWebRtc.Client.Shared;
+@inject IUserInfoService userInfoService
 
 <!DOCTYPE html>
 <html lang="en">
@@ -18,46 +21,46 @@
         body {
             background-color: #f0f8ff;
             color: #333;
-        }       
+        }
 
 
 
         .banner {
             text-align: center;
-            background: url('https://via.placeholder.com/1200x300') no-repeat center center;
+            background: url('https://media.licdn.com/dms/image/C5612AQEeP5f7c-Er-A/article-cover_image-shrink_600_2000/0/1574025086120?e=2147483647&v=beta&t=O8XuESNR5vO9lLMKCmYyE4y4MU194TXLmWX0Bv5nZMk') no-repeat center center;
             background-size: cover;
             padding: 4rem 0;
             color: white;
         }
 
-        .banner h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
+            .banner h1 {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
 
-        .banner button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 5px;
-        }
+            .banner button {
+                background-color: #28a745;
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+                cursor: pointer;
+                border-radius: 5px;
+            }
 
-        .banner button:hover {
-            background-color: #218838;
-        }
+                .banner button:hover {
+                    background-color: #218838;
+                }
 
         .suggested-friends {
             padding: 2rem;
             text-align: center;
         }
 
-        .suggested-friends h2 {
-            font-size: 2rem;
-            margin-bottom: 2rem;
-        }
+            .suggested-friends h2 {
+                font-size: 2rem;
+                margin-bottom: 2rem;
+            }
 
         .friend-card {
             display: inline-block;
@@ -70,22 +73,38 @@
             text-align: center;
         }
 
-        .friend-card img {
-            border-radius: 50%;
-            width: 100px;
-            height: 100px;
-            margin-bottom: 1rem;
+            .friend-card img {
+                border-radius: 50%;
+                width: 100px;
+                height: 100px;
+                margin-bottom: 1rem;
+            }
+
+            .friend-card h3 {
+                font-size: 1.25rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .friend-card p {
+                font-size: 0.9rem;
+                color: #666;
+            }
+
+            .btn-success{
+                background-color:#28a745;
+                color:#fff;
+                border:none;
+                padding:10px 20px;
+                font-size:16px;
+                cursor:pointer;
+                transition:ease;
+            }
+
+        .btn-success:hover {
+            background-color: #218838;
+            box-shadow:0 4px 12px rgba(0,0,0,0.2);
         }
 
-        .friend-card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .friend-card p {
-            font-size: 0.9rem;
-            color: #666;
-        }
     </style>
 </head>
 <body>
@@ -97,21 +116,33 @@
 
     <section class="suggested-friends">
         <h2>Suggested Friends</h2>
-        <div class="friend-card">
-            <img src="https://via.placeholder.com/150" alt="Friend 1">
-            <h3>John Doe</h3>
-            <p>Love hiking and exploring new places.</p>
-        </div>
-        <div class="friend-card">
-            <img src="https://via.placeholder.com/150" alt="Friend 2">
-            <h3>Jane Smith</h3>
-            <p>Coffee enthusiast and avid reader.</p>
-        </div>
-        <div class="friend-card">
-            <img src="https://via.placeholder.com/150" alt="Friend 3">
-            <h3>Sam Brown</h3>
-            <p>Always up for a good conversation.</p>
-        </div>
+
+        @foreach (var friend in responseDtoModel)
+        {
+            <div class="friend-card">
+                <img src="@GetProfilePicture(@friend.ProfilePicture)" alt="Friend 1">
+                <h3>@friend.UserName</h3>
+                <p>Love hiking and exploring new places.</p>
+                <button class="btn btn-success">Detail</button>
+            </div>
+        }
+
     </section>
 </body>
 </html>
+
+@code {
+
+    List<UserDtoResponseModel> responseDtoModel = new List<UserDtoResponseModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        responseDtoModel = await userInfoService.GetUserList();
+    }
+
+    private string GetProfilePicture(string profilePicturePath)
+    {
+        return $"https://localhost:7151/{profilePicturePath}";
+    }
+
+}

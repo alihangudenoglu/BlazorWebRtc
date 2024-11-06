@@ -36,7 +36,12 @@
                     <li><a href="#"> @context.User.Identity.Name</a></li>
 
                     <li><a @onclick="@Logout" href="#">Logout</a></li>
-                </Authorized>                
+                </Authorized>
+
+                <NotAuthorized>
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                </NotAuthorized>
             </AuthorizeView>
 
         </ul>
