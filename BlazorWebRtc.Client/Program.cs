@@ -16,6 +16,7 @@ builder.Services.AddScoped<IAccountService,AccountService>();
 builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IUserInfoService, UserInfoService>();
 builder.Services.AddScoped<IRequestService, RequestService>();
+builder.Services.AddScoped<IUserFriendService, UserFriendService>();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7151/") });
 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomStateProvider>();

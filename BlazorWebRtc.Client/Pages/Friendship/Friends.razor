@@ -1,0 +1,175 @@
+﻿@page "/friends"
+@using BlazorWebRtc.Client.Models.Response
+@using BlazorWebRtc.Client.Services.Abstract
+@using BlazorWebRtc.Client.Shared
+@inject IUserFriendService userFriendService
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    header {
+        background-color: #007bff;
+        padding: 1rem;
+        text-align: center;
+        color: white;
+    }
+
+    .friend-list {
+        margin: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .friend-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        transition: box-shadow 0.3s;
+    }
+
+        .friend-item:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+    .status {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .online {
+        background-color: green;
+    }
+
+    .offline {
+        background-color: red;
+    }
+
+    .btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+    .modal-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .modal {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        max-width: 500px;
+        width: 90%;
+    }
+
+    .friend-item img {
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<Header />
+
+<div class="friend-list">
+
+    @foreach (var friend in userDtos)
+    {
+        <div class="friend-item">
+            <div>
+                <img src="@GetProfilePicture(friend.ProfilePicture)" />
+                <span class="status online">Active</span>
+                @friend.UserName
+            </div>
+            <div>
+                <button class="btn" @onclick="()=>OpenMessageModal()">Send Message</button>
+                <button class="btn" @onclick="()=>StartVideoCall()">Call Video</button>
+            </div>
+        </div>
+    }
+
+</div>
+
+@if (IsModalOpen)
+{
+    <div class="modal-background">
+        <div>
+            <h3>send message</h3>
+            <ul>
+                <li></li>
+            </ul>
+            <div>
+                <textarea @bind="MessageContent" rows="5" placeholder="Please typing your message here..."></textarea>
+                <br />
+                <button @onclick="SendMessage">Send</button>
+                <button @onclick="CloseModal">Close</button>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code {
+    private bool IsModalOpen = false;
+    private string MessageContent;
+    private List<UserDtoResponseModel> userDtos = new List<UserDtoResponseModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        userDtos = await userFriendService.GetAllFriendsByUser();
+    }
+
+    private void OpenMessageModal()
+    {
+
+    }
+    private void CloseModal()
+    {
+
+    }
+    private void StartVideoCall()
+    {
+
+    }
+
+    private async Task SendMessage()
+    {
+        
+    }
+    private string GetProfilePicture(string profilePicturePath)
+    {
+        return $"https://localhost:7151/{profilePicturePath}";
+    }
+
+}
