@@ -26,6 +26,16 @@ public class RequestHandler : IRequestHandler<RequestCommand, bool>
         {
             userId = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            var requests = await _context.Requests.Where(x => x.ReceiverUserId == request.ReceiverUserId).ToListAsync();
+
+            foreach (var item in requests)
+            {
+                if (item.SenderUserId==Guid.Parse(userId)||item.ReceiverUserId==Guid.Parse(userId))
+                {
+                    return false;
+                }
+            }
+
             Request requestObj = new Request();
             requestObj.ReceiverUserId = request.ReceiverUserId;
             requestObj.SenderUserId = Guid.Parse(userId);
