@@ -35,7 +35,7 @@ public class UserListHandler : IRequestHandler<UserListQuery, List<UserDto>>
                 if (userId is not null && userId != user.Id.ToString())
                 {
                     UserDto userDto = new UserDto();
-                    userDto.Id = user.Id;
+                    userDto.UserId = user.Id;
                     userDto.UserName = user.UserName;
                     userDto.Email = user.Email;
                     userDto.ProfilePicture = user.ProfilePicture;

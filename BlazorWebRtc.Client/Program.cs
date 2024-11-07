@@ -3,13 +3,11 @@ using BlazorWebRtc.Client;
 using BlazorWebRtc.Client.Extension;
 using BlazorWebRtc.Client.Services.Abstract;
 using BlazorWebRtc.Client.Services.Concrete;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.SignalR.Client;
-using System.Security.Claims;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

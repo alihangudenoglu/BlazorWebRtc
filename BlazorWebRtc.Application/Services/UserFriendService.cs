@@ -3,7 +3,6 @@ using BlazorWebRtc.Application.Features.Queries.UserFriend;
 using BlazorWebRtc.Application.Interface.Services;
 using BlazorWebRtc.Application.Models;
 using MediatR;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BlazorWebRtc.Application.Services;
 

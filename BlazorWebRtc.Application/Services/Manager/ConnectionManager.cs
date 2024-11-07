@@ -26,6 +26,12 @@ public class ConnectionManager:IConnectionManager
     {
         return _userConnections.Values.SelectMany(connections => connections).ToList();
     }
+
+    public List<string> GetAllUserIds()
+    {
+        return _userConnections.Keys.ToList();
+    }
+
     public string GetConnection(string userId)
     {
         lock (_userConnections)
@@ -54,7 +60,16 @@ public class ConnectionManager:IConnectionManager
         {
             foreach (var userId in _userConnections.Keys)
             {
-                _userConnections[userId].Remove(connectionId);
+                if (_userConnections[userId].Contains(connectionId))
+                {
+
+                    _userConnections[userId].Remove(connectionId);
+                    if (!_userConnections[userId].Any())
+                    {
+                        _userConnections.Remove(userId);
+                    }
+                    break;
+                }
             }
         }
     }

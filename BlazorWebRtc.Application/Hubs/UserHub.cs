@@ -1,5 +1,6 @@
 ﻿using BlazorWebRtc.Application.Interface.Services.Manager;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using System.Security.Claims;
 
 namespace BlazorWebRtc.Application.Hubs;
@@ -20,6 +21,11 @@ public class UserHub:Hub
         var userId = Context.GetHttpContext()?.Request.Query["userId"].ToString();
 
         _connectionManager.AddConnection(userId,connectionId);
+
+        var result = _connectionManager.GetAllUserIds();
+
+        Clients.All.SendAsync("UserStatusChanged", JsonConvert.SerializeObject(result), true).GetAwaiter();
+
         return base.OnConnectedAsync();
     }
 
@@ -28,6 +34,9 @@ public class UserHub:Hub
         var connectionId = Context.ConnectionId;
 
         _connectionManager.RemoveConnection(connectionId);
+        var result = _connectionManager.GetAllUserIds();
+
+        Clients.All.SendAsync("UserStatusChanged", JsonConvert.SerializeObject(result), true).GetAwaiter();
 
         return base.OnDisconnectedAsync(exception);
     }

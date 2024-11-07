@@ -229,7 +229,7 @@
     private async Task SendRequest()
     {
         RequestFriendshipCommand sendCommand = new RequestFriendshipCommand();
-        sendCommand.ReceiverUserId = selectedModel.Id;
+        sendCommand.ReceiverUserId = selectedModel.UserId;
         sendCommand.Status = Status.pending;
         var result = await requestService.SendFriendshipRequest(sendCommand);
 

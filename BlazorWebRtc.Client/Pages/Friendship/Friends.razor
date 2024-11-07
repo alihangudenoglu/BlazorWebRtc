@@ -8,6 +8,7 @@
 @using Microsoft.AspNetCore.Http.Connections
 @using Microsoft.AspNetCore.SignalR.Client
 @using System.Security.Claims
+@using Newtonsoft.Json
 @inject IUserFriendService userFriendService
 @inject HubConnection hubConnection
 @inject AuthenticationStateProvider authStateProvider
@@ -117,7 +118,7 @@
         <div class="friend-item">
             <div>
                 <img src="@GetProfilePicture(friend.ProfilePicture)" />
-                <span class="status online">Active</span>
+                <span class="status @(friend.IsOnline ?"online":"offline")">Status</span>
                 @friend.UserName
             </div>
             <div>
@@ -152,32 +153,65 @@
 @code {
     private bool IsModalOpen = false;
     private string MessageContent;
-    private List<UserDtoResponseModel> userDtos = new List<UserDtoResponseModel>();
+    private List<UserDtoResponseModel> userDtos = new();
+    private string UserIds;
+    private bool IsOnline = false;
 
     protected override async Task OnInitializedAsync()
     {
         userDtos = await userFriendService.GetAllFriendsByUser();
-        await ConnectionOnSignalR();
+        var response = await ConnectionOnSignalR();
+
+        hubConnection.On<string, bool>("UserStatusChanged",async (UserIds, isOnline) =>
+        {
+            userDtos = await userFriendService.GetAllFriendsByUser();
+            var desObj = JsonConvert.DeserializeObject<List<string>>(UserIds);
+
+            var result = desObj;
+
+
+            foreach (var friendOnline in userDtos)
+            {
+                foreach (var item in result)
+                {
+                    if (Guid.Parse(item) == friendOnline.UserId)
+                    {
+                        friendOnline.IsOnline = true;
+                    }
+                }
+            }
+            StateHasChanged();
+        });
 
     }
 
-    private async Task ConnectionOnSignalR()
+    private async Task<bool> ConnectionOnSignalR()
     {
-
-        var token = await localStorageService.GetItemAsync<string>(Constants.LocalToken);
-        if (!string.IsNullOrEmpty(token))
+        try
         {
-            var authState = await authStateProvider.GetAuthenticationStateAsync();
-
-            var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            hubConnection = new HubConnectionBuilder().WithUrl($"https://localhost:7151/userhub?userId={userId}", opt =>
+            var token = await localStorageService.GetItemAsync<string>(Constants.LocalToken);
+            if (!string.IsNullOrEmpty(token))
             {
-                opt.Transports = HttpTransportType.WebSockets | HttpTransportType.LongPolling;
-            }).Build();
+                var authState = await authStateProvider.GetAuthenticationStateAsync();
 
-            await hubConnection.StartAsync();
+                var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                hubConnection = new HubConnectionBuilder().WithUrl($"https://localhost:7151/userhub?userId={userId}", async opt =>
+                {
+                    opt.Transports = HttpTransportType.WebSockets | HttpTransportType.LongPolling;
+                }).Build();
+
+                await hubConnection.StartAsync();
+                
+            }
+            return true;
         }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
+
 
     }
 
