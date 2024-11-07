@@ -3,9 +3,13 @@ using BlazorWebRtc.Client;
 using BlazorWebRtc.Client.Extension;
 using BlazorWebRtc.Client.Services.Abstract;
 using BlazorWebRtc.Client.Services.Concrete;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.AspNetCore.Http.Connections;
+using Microsoft.AspNetCore.SignalR.Client;
+using System.Security.Claims;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -22,6 +26,14 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https:/
 builder.Services.AddScoped<AuthenticationStateProvider, CustomStateProvider>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredLocalStorage();
+
+builder.Services.AddScoped( sp =>
+{
+    return new HubConnectionBuilder().WithUrl($"https://localhost:7151/userhub", opt =>
+    {
+        opt.Transports = HttpTransportType.WebSockets | HttpTransportType.LongPolling;
+    }).Build();
+});
 
 
 await builder.Build().RunAsync();

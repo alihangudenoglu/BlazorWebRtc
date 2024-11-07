@@ -7,9 +7,12 @@ using BlazorWebRtc.Application.Features.Commands.Upload;
 using BlazorWebRtc.Application.Features.Queries.RequestFeature;
 using BlazorWebRtc.Application.Features.Queries.UserFriend;
 using BlazorWebRtc.Application.Features.Queries.UserInfo;
+using BlazorWebRtc.Application.Hubs;
 using BlazorWebRtc.Application.Interface.Services;
+using BlazorWebRtc.Application.Interface.Services.Manager;
 using BlazorWebRtc.Application.Models;
 using BlazorWebRtc.Application.Services;
+using BlazorWebRtc.Application.Services.Manager;
 using BlazorWebRtc.Persistence.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +36,7 @@ builder.Services.AddScoped<IRequestService, RequestService>();
 builder.Services.AddScoped<IUserFriendService, UserFriendService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IUploadService, UploadService>();
+builder.Services.AddScoped<IConnectionManager, ConnectionManager>();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -51,6 +55,7 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings.GetValue<string>("SecretKey");
@@ -80,7 +85,8 @@ builder.Services.AddCors(opt =>
     {
         policy.WithOrigins("http://localhost:5227")
         .AllowAnyHeader()
-        .AllowAnyMethod();
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 
@@ -132,6 +138,8 @@ app.UseStaticFiles();
 app.UseAuthorization();
 
 app.UseCors("AllowBlazorApp");
+
+app.MapHub<UserHub>("/userhub");
 
 app.MapControllers();
 

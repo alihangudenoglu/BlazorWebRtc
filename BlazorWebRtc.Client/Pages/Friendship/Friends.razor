@@ -1,8 +1,17 @@
 ﻿@page "/friends"
+@using BlazorWebRtc.Client.Models
 @using BlazorWebRtc.Client.Models.Response
 @using BlazorWebRtc.Client.Services.Abstract
 @using BlazorWebRtc.Client.Shared
+@using Blazored.LocalStorage
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Http.Connections
+@using Microsoft.AspNetCore.SignalR.Client
+@using System.Security.Claims
 @inject IUserFriendService userFriendService
+@inject HubConnection hubConnection
+@inject AuthenticationStateProvider authStateProvider
+@inject ILocalStorageService localStorageService
 
 <style>
     * {
@@ -148,6 +157,28 @@
     protected override async Task OnInitializedAsync()
     {
         userDtos = await userFriendService.GetAllFriendsByUser();
+        await ConnectionOnSignalR();
+
+    }
+
+    private async Task ConnectionOnSignalR()
+    {
+
+        var token = await localStorageService.GetItemAsync<string>(Constants.LocalToken);
+        if (!string.IsNullOrEmpty(token))
+        {
+            var authState = await authStateProvider.GetAuthenticationStateAsync();
+
+            var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            hubConnection = new HubConnectionBuilder().WithUrl($"https://localhost:7151/userhub?userId={userId}", opt =>
+            {
+                opt.Transports = HttpTransportType.WebSockets | HttpTransportType.LongPolling;
+            }).Build();
+
+            await hubConnection.StartAsync();
+        }
+
     }
 
     private void OpenMessageModal()
@@ -165,7 +196,7 @@
 
     private async Task SendMessage()
     {
-        
+
     }
     private string GetProfilePicture(string profilePicturePath)
     {
