@@ -16,7 +16,7 @@ public class UpdateRequestHandler : IRequestHandler<UpdateRequestCommand, Reques
 
     public async Task<Request> Handle(UpdateRequestCommand request, CancellationToken cancellationToken)
     {
-        var requestObj = await _context.Requests.FirstOrDefaultAsync(x=>x.Id==request.RequestId);
+        var requestObj = await _context.Requests.FirstOrDefaultAsync(x=>x.Id==Guid.Parse(request.RequestId));
         requestObj.Status= request.Status;
         if (await _context.SaveChangesAsync()>0)
         {

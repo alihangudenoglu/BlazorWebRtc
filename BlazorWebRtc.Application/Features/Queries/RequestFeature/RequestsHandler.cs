@@ -27,6 +27,7 @@ public class RequestsHandler : IRequestHandler<RequestsQuery, List<GetRequestDto
             requestDto.UserName = item.SenderUser.UserName;
             requestDto.Email = item.SenderUser.Email;
             requestDto.UserId = item.SenderUserId;
+            requestDto.Id = item.Id;
             requestList.Add(requestDto);
         }
 

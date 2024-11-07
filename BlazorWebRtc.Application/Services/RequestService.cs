@@ -30,7 +30,7 @@ public class RequestService : IRequestService
             _responseModel.IsSuccess = false;
             return _responseModel;
         }
-        _responseModel.IsSuccess = false;
+        _responseModel.IsSuccess = true;
         _responseModel.Data=result;
         return _responseModel;
     }
@@ -58,18 +58,24 @@ public class RequestService : IRequestService
             _responseModel.IsSuccess = false;
             return _responseModel;
         }
-
-        UserFriendCommand userFriendCommand = new UserFriendCommand();
-        userFriendCommand.RequesterId = result.SenderUserId;
-        userFriendCommand.ReceiverUserId = result.ReceiverUserId;
-
-        var response=await _userFriendService.AddFriendship(userFriendCommand);
-
-        if (response.IsSuccess)
+        if (command.Status==Domain.Status.accept)
         {
-            _responseModel.IsSuccess = true;
+            UserFriendCommand userFriendCommand = new UserFriendCommand();
+            userFriendCommand.RequesterId = result.SenderUserId;
+            userFriendCommand.ReceiverUserId = result.ReceiverUserId;
+
+            var response = await _userFriendService.AddFriendship(userFriendCommand);
+
+            if (response.IsSuccess)
+            {
+                _responseModel.IsSuccess = true;
+                return _responseModel;
+            }
+            _responseModel.IsSuccess = false;
             return _responseModel;
         }
+
+        
         _responseModel.IsSuccess = false;
         return _responseModel;
     }

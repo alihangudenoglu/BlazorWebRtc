@@ -237,8 +237,12 @@
         {
             await JS.InvokeVoidAsync("toastrNotify","success","Friendship request sent","Success Process");
         }
+        else
+        {
+            await JS.InvokeVoidAsync("toastrNotify", "error", "Failed to send a friend request", "Error Process");
+        }
 
-        await JS.InvokeVoidAsync("toastrNotify", "error", "Failed to send a friend request", "Error Process");
+
 
         CloseModal();
     }

@@ -1,6 +1,8 @@
-﻿@using BlazorWebRtc.Client.Services.Abstract
+﻿@using BlazorWebRtc.Client.Models.Request
+@using BlazorWebRtc.Client.Services.Abstract
 @using Microsoft.AspNetCore.Components.Authorization
 @inject IAccountService accountService
+@inject IRequestService requestService
 @inject NavigationManager navigationManager
 
 <style>
@@ -29,7 +31,7 @@
         <ul>
             <li><a href="#">Home</a></li>
             <li><a href="#">Messages</a></li>
-            <li><a href="#">Notifications</a></li>
+            <li><a href="" @onclick="@OpenModal">Notifications(@requestCount)</a></li>
 
             <AuthorizeView>
                 <Authorized>
@@ -48,10 +50,28 @@
     </nav>
 </header>
 
+<BaseModal IsOpen="@IsModalOpen" IsOpenChanged="@((value) => IsModalOpen = value)" Requests="@getRequests" RefreshRequestList="@OnInitializedAsync"/>
+
 @code {
+    private int requestCount;
+    public bool IsModalOpen = false;
+    private List<GetRequestFriendshipList> getRequests = new List<GetRequestFriendshipList>();
+
     private async Task Logout()
     {
         await accountService.Logout();
         navigationManager.NavigateTo("/");
+    }
+
+    private async Task OpenModal()
+    {
+        getRequests = await requestService.GetFriendshipRequest();
+        IsModalOpen = true;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await requestService.GetFriendshipRequest();
+        requestCount = result.Count;
     }
 }
