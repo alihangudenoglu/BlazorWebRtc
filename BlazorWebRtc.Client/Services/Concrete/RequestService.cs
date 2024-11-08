@@ -23,15 +23,16 @@ public class RequestService : IRequestService
     public async Task<List<GetRequestFriendshipList>> GetFriendshipRequest()
     {
         var result= await ((CustomStateProvider)_authenticationStateProvider).GetAuthenticationStateAsync();
-
-
-        var response = await _httpClient.GetAsync($"api/Request/{result.User.FindFirst(ClaimTypes.NameIdentifier)?.Value}");
-        var content = await response.Content.ReadAsStringAsync();
-        var deserialize = JsonConvert.DeserializeObject<ResponseModel>(content);
-        if (deserialize.IsSuccess)
+        if (result.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!=null)
         {
-            var desObj = JsonConvert.DeserializeObject<List<GetRequestFriendshipList>>(deserialize.Data.ToString());
-            return desObj;
+            var response = await _httpClient.GetAsync($"api/Request/{result.User.FindFirst(ClaimTypes.NameIdentifier)?.Value}");
+            var content = await response.Content.ReadAsStringAsync();
+            var deserialize = JsonConvert.DeserializeObject<ResponseModel>(content);
+            if (deserialize.IsSuccess)
+            {
+                var desObj = JsonConvert.DeserializeObject<List<GetRequestFriendshipList>>(deserialize.Data.ToString());
+                return desObj;
+            }
         }
         return new List<GetRequestFriendshipList>();
     }

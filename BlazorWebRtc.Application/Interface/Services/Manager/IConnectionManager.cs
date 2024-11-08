@@ -9,5 +9,6 @@ public interface IConnectionManager
     List<string> GetSpecificConnections();
     List<string> GetAllUserIds();
     List<string> GetConnectionByUserId(List<string> userIds);
+    string GetConnectionByUserIdSingleObj(string userId);
     void RemoveConnection(string connectionId);
 }

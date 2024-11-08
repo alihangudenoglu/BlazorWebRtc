@@ -2,7 +2,7 @@
 
 namespace BlazorWebRtc.Application.Services.Manager;
 
-public class ConnectionManager:IConnectionManager
+public class ConnectionManager : IConnectionManager
 {
     private static Dictionary<string, List<string>> _userConnections = new Dictionary<string, List<string>>();
 
@@ -42,15 +42,25 @@ public class ConnectionManager:IConnectionManager
 
     public List<string> GetConnectionByUserId(List<string> userIds)
     {
-        var connections= new List<string>();
+        var connections = new List<string>();
         foreach (var userId in userIds)
         {
-            if (_userConnections.TryGetValue(userId,out var userConnections))
+            if (_userConnections.TryGetValue(userId, out var userConnections))
             {
                 connections.AddRange(userConnections);
             }
         }
         return connections;
+    }
+
+    public string GetConnectionByUserIdSingleObj(string userId)
+    {
+        if (_userConnections.TryGetValue(userId, out var userConnections) && userConnections.Any())
+        {
+            return userConnections.First();
+        }
+        return null;
+
     }
 
     public IEnumerable<string> GetConnections(string userId)

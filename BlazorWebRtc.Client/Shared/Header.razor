@@ -30,11 +30,11 @@
     <nav>
         <ul>
             <li><a href="/">Home</a></li>
-            <li><a href="" @onclick="@OpenModal">Notifications(@requestCount)</a></li>
+
 
             <AuthorizeView>
                 <Authorized>
-
+                    <li><a href="" @onclick="@OpenModal">Notifications(@requestCount)</a></li>
                     <li><a href="/friends">Friends</a></li>
                     <li><a href="/"> @context.User.Identity.Name</a></li>
 
@@ -73,6 +73,10 @@
     protected override async Task OnInitializedAsync()
     {
         var result = await requestService.GetFriendshipRequest();
-        requestCount = result.Count;
+        if (result.Count >0)
+        {
+            requestCount = result.Count;
+            StateHasChanged();
+        }
     }
 }
