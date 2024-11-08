@@ -1,5 +1,6 @@
 ﻿@page "/friends"
 @using BlazorWebRtc.Client.Models
+@using BlazorWebRtc.Client.Models.Request
 @using BlazorWebRtc.Client.Models.Response
 @using BlazorWebRtc.Client.Services.Abstract
 @using BlazorWebRtc.Client.Shared
@@ -13,6 +14,7 @@
 @inject HubConnection hubConnection
 @inject AuthenticationStateProvider authStateProvider
 @inject ILocalStorageService localStorageService
+@inject IMessageService messageService
 
 <style>
     * {
@@ -85,21 +87,100 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
+        background-color: rgba(0, 0, 0, 0.5);
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 1000;
     }
 
     .modal {
-        background: white;
-        padding: 2rem;
+        background-color: #fff;
         border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        padding: 20px;
         max-width: 500px;
         width: 90%;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        position: relative;
     }
+
+        .modal h3 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        max-height: 200px;
+        overflow-y: auto;
+        margin-bottom: 15px;
+    }
+
+    .message-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .message-content {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .message-date {
+        font-size: 0.9em;
+        color: #888;
+    }
+
+    .message-input {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    textarea {
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        font-size: 1em;
+        resize: none;
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .send-button, .close-button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s ease;
+    }
+
+    .send-button {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .close-button {
+        background-color: #f44336;
+        color: white;
+    }
+
+    .send-button:hover {
+        background-color: #45a049;
+    }
+
+    .close-button:hover {
+        background-color: #e53935;
+    }
+
 
     .friend-item img {
         border-radius: 50%;
@@ -107,6 +188,25 @@
         height: 100px;
         margin-bottom: 1rem;
     }
+
+    .message-item-right {
+        display: flex;
+        justify-content: flex-end;
+        padding: 10px;
+        background-color:#d1ffd1;
+        border-radius:8px;
+        margin:5px 0;
+    }
+
+    .message-item-left {
+        display: flex;
+        justify-content: flex-start;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-radius: 8px;
+        margin: 5px 0;
+    }
+
 </style>
 
 <Header />
@@ -122,7 +222,7 @@
                 @friend.UserName
             </div>
             <div>
-                <button class="btn" @onclick="()=>OpenMessageModal()">Send Message</button>
+                <button class="btn" @onclick="()=>OpenMessageModal(friend.UserId.ToString())">Send Message</button>
                 <button class="btn" @onclick="()=>StartVideoCall()">Call Video</button>
             </div>
         </div>
@@ -133,10 +233,19 @@
 @if (IsModalOpen)
 {
     <div class="modal-background">
-        <div>
+        <div class="modal">
             <h3>send message</h3>
             <ul>
-                <li></li>
+                @foreach (var message in listMessage)
+                {
+                    bool isCurrentUser = message.SenderUserId == Guid.Parse(loggedInUserId);
+
+                    <li class="@(isCurrentUser ? "message-item-right" :"message-item-left")">
+                        <span class="message-content">@message.MessageContent</span>
+                        <span class="message-date">@message.CreateDate</span>
+                    </li>
+                    
+                }
             </ul>
             <div>
                 <textarea @bind="MessageContent" rows="5" placeholder="Please typing your message here..."></textarea>
@@ -154,11 +263,17 @@
     private bool IsModalOpen = false;
     private string MessageContent;
     private List<UserDtoResponseModel> userDtos = new();
+    private List<MessageListResponseModel> listMessage = new();
     private string UserIds;
     private bool IsOnline = false;
+    private string selectedUserId;
+    private string loggedInUserId;
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        loggedInUserId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
         userDtos = await userFriendService.GetAllFriendsByUser();
         var response = await ConnectionOnSignalR();
 
@@ -182,6 +297,13 @@
             }
             StateHasChanged();
         });
+        hubConnection.On<string>("ReceiveMessage", async (MessagesContent) =>
+        {
+            var desObj = JsonConvert.DeserializeObject<List<MessageListResponseModel>>(MessagesContent);
+            listMessage = desObj;
+
+            StateHasChanged();
+        });
 
     }
 
@@ -202,7 +324,7 @@
                 }).Build();
 
                 await hubConnection.StartAsync();
-                
+
             }
             return true;
         }
@@ -215,13 +337,20 @@
 
     }
 
-    private void OpenMessageModal()
+    private async Task OpenMessageModal(string userId)
     {
+        IsModalOpen = true;
+        MessageContent = "";
+
+        MessageQueryModel messageModel = new();
+        messageModel.MessageUserId=userId;
+        selectedUserId = userId;
+        listMessage = await messageService.GetMessageList(messageModel);
 
     }
     private void CloseModal()
     {
-
+        IsModalOpen = false;
     }
     private void StartVideoCall()
     {
@@ -230,6 +359,18 @@
 
     private async Task SendMessage()
     {
+        SendMessageModel messageModel=new();
+        messageModel.MessageContent = MessageContent;
+        messageModel.ReceiverUserId = selectedUserId;
+
+        var result = await messageService.SendMessage(messageModel);
+
+        if (result)
+        {
+            await OpenMessageModal(selectedUserId);
+        }
+
+
 
     }
     private string GetProfilePicture(string profilePicturePath)

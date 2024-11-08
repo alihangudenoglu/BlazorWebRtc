@@ -4,6 +4,7 @@ using BlazorWebRtc.Application.Features.Commands.Feature;
 using BlazorWebRtc.Application.Features.Commands.MessageCommand.SendMessage;
 using BlazorWebRtc.Application.Features.Commands.RequestFeature;
 using BlazorWebRtc.Application.Features.Commands.Upload;
+using BlazorWebRtc.Application.Features.Queries.MessageQuery;
 using BlazorWebRtc.Application.Features.Queries.RequestFeature;
 using BlazorWebRtc.Application.Features.Queries.UserFriend;
 using BlazorWebRtc.Application.Features.Queries.UserInfo;
@@ -15,6 +16,7 @@ using BlazorWebRtc.Application.Services;
 using BlazorWebRtc.Application.Services.Manager;
 using BlazorWebRtc.Persistence.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -50,6 +52,7 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(UserFriendListQuery).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(SendMessageHandler).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(UploadHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(GetMessagesHandler).Assembly);
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -59,6 +62,8 @@ builder.Services.AddSignalR();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings.GetValue<string>("SecretKey");
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddAuthentication(options =>
 {

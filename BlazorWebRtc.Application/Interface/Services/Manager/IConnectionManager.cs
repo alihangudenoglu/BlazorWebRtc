@@ -8,5 +8,6 @@ public interface IConnectionManager
     IEnumerable<string> GetConnections(string userId);
     List<string> GetSpecificConnections();
     List<string> GetAllUserIds();
+    List<string> GetConnectionByUserId(List<string> userIds);
     void RemoveConnection(string connectionId);
 }

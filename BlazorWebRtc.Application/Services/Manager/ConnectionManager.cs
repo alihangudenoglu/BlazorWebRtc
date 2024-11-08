@@ -40,6 +40,19 @@ public class ConnectionManager:IConnectionManager
         }
     }
 
+    public List<string> GetConnectionByUserId(List<string> userIds)
+    {
+        var connections= new List<string>();
+        foreach (var userId in userIds)
+        {
+            if (_userConnections.TryGetValue(userId,out var userConnections))
+            {
+                connections.AddRange(userConnections);
+            }
+        }
+        return connections;
+    }
+
     public IEnumerable<string> GetConnections(string userId)
     {
         lock (_userConnections)
